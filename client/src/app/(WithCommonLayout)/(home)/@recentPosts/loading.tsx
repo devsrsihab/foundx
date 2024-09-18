@@ -1,10 +1,7 @@
-import { getRecentPosts } from "@/src/services/RecentPosts";
-import Card from "../../UI/Card";
-import Container from "../../UI/Container";
+import Container from "@/src/components/UI/Container";
+import CardSkeleton from "@/src/components/UI/LoadingCardSkelton";
 
-const RecentPosts = async () => {
-  const { data: posts } = await getRecentPosts();
-  await new Promise((resolve) => setTimeout(resolve, 10000));
+const Loading = () => {
   return (
     <Container>
       <div className="section-title my-10">
@@ -14,12 +11,12 @@ const RecentPosts = async () => {
         </p>
       </div>
       <div className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 ">
-        {posts?.map((post: any) => (
-          <Card key={post._id} post={post} />
+        {[...Array(3)].map((_, index) => (
+          <CardSkeleton key={index} />
         ))}
       </div>
     </Container>
   );
 };
 
-export default RecentPosts;
+export default Loading;

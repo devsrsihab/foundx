@@ -1,5 +1,2 @@
-import { SVGProps } from "react";
-
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-  size?: number;
-};
+export * from "./post.type"
+export * from "./provider.type"

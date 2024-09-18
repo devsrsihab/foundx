@@ -3,10 +3,10 @@ import { Metadata, Viewport } from "next";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 
-import { Providers } from "./providers";
 
 import { siteConfig } from "@/src/config/site";
 import { fontSans } from "@/src/config/fonts";
+import { Providers } from "../lib/Providers";
 
 export const metadata: Metadata = {
   title: {
@@ -42,9 +42,12 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
+            
             <main>
               {children}
             </main>
+
+
             <footer className="w-full flex items-center justify-center py-3">
               <Link
                 isExternal
