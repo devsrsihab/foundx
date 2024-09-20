@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -7,25 +8,28 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@nextui-org/navbar";
-import { Kbd } from "@nextui-org/kbd";
-import { Input } from "@nextui-org/input";
+
 import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 
 import { siteConfig } from "@/src/config/site";
 import { ThemeSwitch } from "@/src/components/theme-switch";
-import { SearchIcon, Logo } from "@/src/components/icons";
+import { Logo } from "@/src/components/icons";
 import NavbarDropdown from "./NavbarDropdown";
+import { useUser } from "@/src/context/user.provider";
+import Link from "next/link";
 
 export const Navbar = () => {
+  const { user, isLoading: userLoading } = useUser();
+
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <p className="font-bold text-inherit">SRS</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
@@ -55,9 +59,17 @@ export const Navbar = () => {
           <ThemeSwitch />
         </NavbarItem>
 
-        <NavbarItem className="hidden sm:flex">
-          <NavbarDropdown />
-        </NavbarItem>
+        {!userLoading ? (
+          user?.email ? (
+            <NavbarItem className="hidden sm:flex">
+              <NavbarDropdown />
+            </NavbarItem>
+          ) : (
+            <Link href="/auth/login">Login</Link>
+          )
+        ) : (
+          ""
+        )}
       </NavbarContent>
 
       {/* Mobile */}

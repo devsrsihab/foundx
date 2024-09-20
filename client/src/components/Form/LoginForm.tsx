@@ -11,17 +11,19 @@ import Link from "next/link";
 import { useUserLogin } from "@/src/hooks/auth.hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useUser } from "@/src/context/user.provider";
 
 const LoginForm = () => {
   const { mutate: handleUserLogin, isPending, isSuccess } = useUserLogin();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams?.get("redirect");
+  const { setIsLoading: userLoading } = useUser();
 
   // handle submit form
   const handleSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
     handleUserLogin(data);
+    userLoading(true);
   };
 
   // if successfully login

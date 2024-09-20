@@ -9,10 +9,16 @@ import {
 import { Avatar } from "@nextui-org/avatar";
 import { useRouter } from "next/navigation";
 import { logOutUser } from "@/src/services/AuthService";
+import { useUser } from "@/src/context/user.provider";
 
 const NavbarDropdown = () => {
   const router = useRouter();
+  const { setIsLoading: userLoading } = useUser();
   const handleNavigation = (path: string) => router.push(path);
+  const handleUserLogout = () => {
+    logOutUser();
+    userLoading(true);
+  };
 
   return (
     <Dropdown>
@@ -35,7 +41,7 @@ const NavbarDropdown = () => {
           Settings
         </DropdownItem>
         <DropdownItem
-          onClick={() => logOutUser()}
+          onClick={() => handleUserLogout()}
           className="text-danger"
           color="danger"
         >

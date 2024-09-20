@@ -53,6 +53,7 @@ export const getCurrentuser = async () => {
       email: decodedToken?.email,
       role: decodedToken?.role,
       mobileNumber: decodedToken?.mobileNumber,
+      profilePhoto: decodedToken?.profilePhoto,
       status: decodedToken?.status,
     };
   }
