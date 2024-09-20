@@ -35,7 +35,7 @@ const NavbarDropdown = () => {
           Claim Request
         </DropdownItem>
         <DropdownItem onClick={() => handleNavigation("/profile/create-post")}>
-          Create Request
+          Create Post
         </DropdownItem>
         <DropdownItem onClick={() => handleNavigation("/settings")}>
           Settings
