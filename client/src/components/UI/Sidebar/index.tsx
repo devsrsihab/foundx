@@ -8,7 +8,6 @@ import { Image } from "@nextui-org/image";
 
 const Sidebar = () => {
   const { user } = useUser();
-  console.log(user);
 
   return (
     <div>
