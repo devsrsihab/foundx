@@ -11,7 +11,7 @@ const Loading = () => {
         </p>
       </div>
       <div className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 ">
-        {[...Array(3)].map((_, index) => (
+        {[...Array(6)].map((_, index) => (
           <CardSkeleton key={index} />
         ))}
       </div>
