@@ -1,12 +1,19 @@
 "use client";
 
+import { PlusIcon, TrashIcon } from "@/src/assets/icons";
 import FXDatePicker from "@/src/components/Form/FXDatePicker";
 import FXInput from "@/src/components/Form/FXInput";
 import FXSelect from "@/src/components/Form/FXSelect";
+import FXTextArea from "@/src/components/Form/FXTextArea";
+import { useUser } from "@/src/context/user.provider";
+import { useGetCategories } from "@/src/hooks/categories.hook";
+import { useCreatePostMutation } from "@/src/hooks/post.hook";
+import { IFormData } from "@/src/types";
 import dateToISO from "@/src/utils/dateToIso";
 import { allDistict } from "@bangladeshi/bangladesh-address";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
+import { useState } from "react";
 import {
   FieldValues,
   FormProvider,
@@ -16,6 +23,30 @@ import {
 } from "react-hook-form";
 
 const Page = () => {
+  // define state
+  const [imageFile, setImageFile] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+  const { mutate: createPost, isPending: postPending } =
+    useCreatePostMutation();
+  const { user } = useUser();
+  // get categories
+  const {
+    data: categoriesData,
+    isLoading: categoryLoading,
+    isSuccess: categorySuccess,
+  } = useGetCategories();
+  // define option let
+  let categorieOptions: { key: string; label: string }[] = [];
+
+  if (categoriesData?.data && !categoryLoading) {
+    categorieOptions = categoriesData?.data?.map(
+      (category: { _id: string; name: string }) => ({
+        key: category._id,
+        label: category.name,
+      })
+    );
+  }
+
   // define methods
   const methods = useForm();
 
@@ -35,20 +66,50 @@ const Page = () => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    const postData = {
+    const formData = new FormData();
+
+    const postData: IFormData = {
       ...data,
+      title: data.title,
+      location: data.location,
+      city: data.city,
+      category: data.category,
+      description: data.description,
       questions: data.questions.map(
         (question: { value: string }) => question.value
       ),
-      foundDate: dateToISO(data.foundDate),
+      dateFound: dateToISO(data.foundDate),
+      user: user?._id as string,
+      itemImages: data.itemImages,
     };
 
-    console.log(postData);
+    formData.append("data", JSON.stringify(postData));
+
+    for (const image of imageFile) {
+      formData.append("itemImages", image);
+    }
+
+    createPost(formData);
   };
 
   // handle field array append
   const handleFieldAppent = () => {
     append({ name: "questions" });
+  };
+
+  // handle image change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0];
+    setImageFile([...imageFile, file]);
+
+    // if file
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview([...imagePreview, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -75,12 +136,66 @@ const Page = () => {
               <FXSelect options={cityOptions} name="city" label="City" />
             </div>
           </div>
+          {/* location and city */}
+          <div className="flex flex-wrap gap-4 py-2">
+            <div className="min-w-fit flex-1">
+              <FXSelect
+                disabled={!categorySuccess}
+                options={categorieOptions}
+                name="category"
+                label="Category"
+                variant="bordered"
+              />
+            </div>
+            <div className="min-w-fit flex-1">
+              <label
+                className="bg-default-100 block w-full h-full rounded-md p-4"
+                htmlFor="image"
+              >
+                Upload Image
+              </label>
+              <input
+                onChange={(e) => handleImageChange(e)}
+                multiple
+                className="hidden"
+                type="file"
+                name="image"
+                id="image"
+              />
+            </div>
+          </div>
+
+          {/* image preview div */}
+          <div className="flex flex-wrap gap-3 my-3">
+            {imagePreview.length > 0 &&
+              imagePreview.map((image, index) => (
+                <div
+                  className="relative size-48 rounded-xl border-2 p-2 border-dashed border-default-100"
+                  key={index}
+                >
+                  <img
+                    className="w-full h-full object-cover rounded-xl"
+                    src={image}
+                    alt=""
+                  />
+                </div>
+              ))}
+          </div>
+
+          <div>
+            <FXTextArea name="description" label="Description" />
+          </div>
 
           <Divider className="my-5" />
           <div className="flex justify-between items-center">
             <h2 className="text-2xl ">Owner Verification Questions</h2>
-            <Button onClick={() => handleFieldAppent()} radius="none">
-              Add Question
+            <Button
+              isIconOnly
+              onClick={() => handleFieldAppent()}
+              radius="none"
+              className="p-1"
+            >
+              <PlusIcon />
             </Button>
           </div>
 
@@ -89,14 +204,24 @@ const Page = () => {
             {fields.map((field, index) => (
               <div className="flex gap-3 items-center" key={field.id}>
                 <FXInput name={`questions.${index}.value`} label="Question" />
-                <Button onClick={() => remove(index)} className="bg-red-500 ">
-                  Remove
+                <Button
+                  isIconOnly
+                  onClick={() => remove(index)}
+                  className="bg-red-500 p-2"
+                  radius="none"
+                >
+                  <TrashIcon />
                 </Button>
               </div>
             ))}
           </div>
 
-          <Button className="mt-5" radius="none" type="submit">
+          <Button
+            isLoading={postPending}
+            className="mt-5"
+            radius="none"
+            type="submit"
+          >
             Create
           </Button>
         </form>

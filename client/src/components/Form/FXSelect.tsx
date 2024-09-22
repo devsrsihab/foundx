@@ -9,7 +9,7 @@ interface IProps extends IInput {
   }[];
 }
 
-const FXSelect = ({ options, name, label, variant = "bordered" }: IProps) => {
+const FXSelect = ({ options, name, label, variant, disabled }: IProps) => {
   const {
     register,
     formState: { errors },
@@ -17,11 +17,12 @@ const FXSelect = ({ options, name, label, variant = "bordered" }: IProps) => {
 
   return (
     <Select
+      isDisabled={disabled}
       variant={variant}
       label={label}
       {...register(name)}
       errorMessage={errors[name] ? (errors[name].message as string) : ""}
-      placeholder="Select an animal"
+      placeholder={label}
       className="max-w-xs"
     >
       {options.map((option) => (
