@@ -21,8 +21,8 @@ const Sidebar = () => {
           />
         </div>
         <div className="my-3">
-          <h1 className="text-2xl font-semibold">Mofiz</h1>
-          <p className="break-words text-sm">mofiz@gmail.com</p>
+          <h1 className="text-2xl font-semibold">{user?.name}</h1>
+          <p className="break-words text-sm">{user?.email}</p>
         </div>
         <Button
           as={Link}

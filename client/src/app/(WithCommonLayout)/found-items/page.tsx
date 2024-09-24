@@ -8,7 +8,7 @@ const Page = async () => {
 
   return (
     <Container>
-      <div className="mx-auto my-3 max-w-[720px]">
+      <div className="mx-auto my-5 space-y-10 max-w-[720px]">
         {data?.data?.map((post: any) => (
           <Post key={post._id} post={post} />
         ))}

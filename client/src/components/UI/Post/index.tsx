@@ -7,6 +7,8 @@ import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { IPost, IUser } from "@/src/types";
 import { useUser } from "@/src/context/user.provider";
 import ImageGallery from "./ImageGallery";
+import ClaimRequestModal from "../../modal/ClaimRequestModal";
+import { Button } from "@nextui-org/button";
 
 interface IProps {
   post: IPost;
@@ -28,6 +30,7 @@ const Post = ({ post }: IProps) => {
   const { name, email, profilePhoto } = (user as IUser) || {};
 
   const { user: loggedInUser } = useUser();
+
 
   return (
     <div className="mb-2 rounded-md bg-default-100 p-4">
@@ -62,6 +65,14 @@ const Post = ({ post }: IProps) => {
           <p>{description}</p>
         </div>
         <ImageGallery images={images} />
+
+        <div className="mt-4 flex gap-5">
+          <ClaimRequestModal id={_id} questions={questions} />
+          <div className="w-[1px]  bg-default-200"></div>
+          <Button variant="light" className="flex-1">
+            Share
+          </Button>
+        </div>
       </div>
     </div>
   );
