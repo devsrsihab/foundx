@@ -9,6 +9,7 @@ import { useUser } from "@/src/context/user.provider";
 import ImageGallery from "./ImageGallery";
 import ClaimRequestModal from "../../modal/ClaimRequestModal";
 import { Button } from "@nextui-org/button";
+import AuthenticationModal from "../../modal/AuthenticationModal";
 
 interface IProps {
   post: IPost;
@@ -67,7 +68,20 @@ const Post = ({ post }: IProps) => {
         <ImageGallery images={images} />
 
         <div className="mt-4 flex gap-5">
-          <ClaimRequestModal id={_id} questions={questions} />
+         {
+            email !== loggedInUser?.email && (
+              <>
+                {
+                  loggedInUser?.email && (
+                    <ClaimRequestModal id={_id} questions={questions} />
+                  )
+                }
+                {
+                  !loggedInUser?.email && <AuthenticationModal id={_id} />
+                }
+              </>
+            )
+          }
           <div className="w-[1px]  bg-default-200"></div>
           <Button variant="light" className="flex-1">
             Share
